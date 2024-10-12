@@ -3,6 +3,7 @@
 <p align="center">
   <a href="https://medium.com/@hsinhungw/gpt-2-detailed-model-architecture-6b1aad33d16b">Image Source</a>
 </p>
+
 ## File Description 
 1. fineweb.py : Python script to download and save 100M tokens as numpy array.
 2. gpt2.py : Architecture of GPT-2 model
