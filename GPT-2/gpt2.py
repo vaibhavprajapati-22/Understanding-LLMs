@@ -200,34 +200,3 @@ class GPT(nn.Module):
         optimizer = torch.optim.AdamW(optim_groups, lr=learning_rate, betas=(0.9, 0.95), eps=1e-8, fused=use_fused)
         return optimizer
 
-
-if __name__ == "__main__":
-    model = GPT.from_pretrained('gpt2')
-    print("Program did not crash")
-    model.eval()
-
-    num_return_sequences = 5
-    max_length = 30
-
-    import tiktoken
-
-    enc = tiktoken.get_encoding('gpt2')
-    tokens = enc.encode("Hello, I am a language model")
-    tokens = torch.tensor(tokens, dtype=torch.long)
-    x = tokens.unsqueeze(0).repeat(num_return_sequences, 1)
-    while x.size(1) < max_length:
-        with torch.no_grad():
-            logits, _ = model(x)
-            logits = logits[:, -1, :]
-            probs = F.softmax(logits, dim=-1)
-
-            topk_probs, topk_indices = torch.topk(probs, 50, dim=-1)
-
-            ix = torch.multinomial(topk_probs, num_samples=1)
-            xol = torch.gather(topk_indices, dim=-1, index=ix)
-            x = torch.cat([x, xol], dim=1)
-
-    for i in range(num_return_sequences):
-        tokens = x[i, :max_length].tolist()
-        text = enc.decode(tokens)
-        print(text)
